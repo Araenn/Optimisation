@@ -1,0 +1,3 @@
+- finish part one
+- try BFGS or conjugued gradient (use fminbnd for optimal step)
+- compare
