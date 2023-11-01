@@ -12,7 +12,7 @@ function tp1
     x3 = 4;
     x4 = -5;
 
-    bruit = 0.5;
+    bruit = 0;
     xv = [x1; x2; x3; x4];
     data(:,1) = t';
     % données
@@ -40,6 +40,9 @@ function tp1
     figure(1)
     semilogy((0:niter-1)', f)
     grid()
+    title("Convergence de la fonction de coût")
+    xlabel("Nombre d'itérations")
+    ylabel("Fonction de coût")
 end
 
 function [x_estim, f] = LM(niter, critere, mu0, data, x0, nu)
@@ -64,7 +67,6 @@ function [x_estim, f] = LM(niter, critere, mu0, data, x0, nu)
         
         
         i = i + 1;
-        i
     end
     x_estim = x0;
 end
