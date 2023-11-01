@@ -22,6 +22,7 @@ function tp1
 
     % initialisation
     x0 = [-5;-10;-4;2];
+    x0 = randn(4, 1)
     niter = 1000;
     critere = 10^-12;
 
@@ -67,8 +68,6 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         
         [f_next, g_next, J_next] = fcout(data, x_next);
         
-        db = x_next - x0;
-        
         y = g_next - g_courant;
         s = alpha * d;
         z = H*s;
@@ -104,7 +103,7 @@ function [f_courant, G, J] = fcout(data, x)
 
     % calcul hm
     h = data(:, 2) - x(3) .* exp(x(1) * t) - x(4) .* exp(x(2)*t);
-    
+
     % fonction cout
     f_courant = (1/2) * norm(h)^2;
     J = [-x(3)*t.*exp(x(1) * t),  - x(4)*t .* exp(x(2)*t), -exp(x(1)*t), - exp(x(2)*t)];

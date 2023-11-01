@@ -22,7 +22,6 @@ function tp1
 
     % initialisation
     x0 = [-5;-10;-4;2];
-    
     niter = 1000;
     critere = 10^-12;
     tau = 1^-6;
