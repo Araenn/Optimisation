@@ -15,24 +15,25 @@ function tp1
     bruit = 0;
     xv = [x1; x2; x3; x4];
     data(:,1) = t';
+
     % données
     ym = xv(3) * exp(xv(1) * t) + xv(4) * exp(xv(2) * t)+ bruit * randn(length(t), 1);
-    % hm = ym - xv(3) * exp(xv(1) * t) + xv(4) * exp(xv(2) * t)+ bruit * randn(length(t), 1);
     data(:,2) = ym;
+
     % initialisation
     x0 = [-5;-10;-4;2];
-    
     niter = 1000;
     critere = 10^-12;
-    tau = 1^-6;
 
     % premier jacobien
     Ju0 = [-x0(3)*t.*exp(x0(1) * t),  - x0(4)*t .* exp(x0(2)*t), -exp(x0(1)*t), - exp(x0(2)*t)];
     %premier hessien
     Hu0 = Ju0' * Ju0;
     Hu0 = inv(Hu0);
+
     [x_estim, f] = BFGS(niter, critere, data, x0, Hu0);
     x_estim
+
     figure(1)
     semilogy((0:niter-1)', f)
     grid()
@@ -56,12 +57,12 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         
         
         % Direction de recherche
-        d = -H * g_courant;
+        d = -H \ g_courant;
         
         % Calcul du pas (alpha) avec une recherche linéaire
-        alpha = linesearch(data, x0, d, 0.1);
+        alpha = linesearch(data, x0, d, 0.0001);
 
-        % Mise à jour de x0
+        % Mise à jour de x
         x_next = x0 + alpha * d;
         
         [f_next, g_next, J_next] = fcout(data, x_next);
@@ -69,12 +70,13 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         db = x_next - x0;
         
         y = g_next - g_courant;
-        I = eye(4);
-        A = (I - ((db * y')/(db' *y)));
+        s = alpha * d;
+        z = H*s;
+
         % Mise à jour de la matrice BFGS
-        % H = A * H * A + ((db * db')/(db' * y));
-        H = H + (y * y')
-        f(i) = f_courant;
+        H = H + (y*y')/(y'*s) - (z*z')/(s'*z);
+        
+        f(i) = f_next;
         erreur = abs((f(i) - f(i-1)))/f(i-1);
         
         if i > niter
@@ -90,7 +92,7 @@ end
 
 
 function alpha = linesearch(data, x0, d, tol)
-    f = @(alpha) fcout(data, x0 + alpha * d);  % Créez une fonction coût en fonction de alpha
+    f = @(alpha) fcout(data, x0 + alpha * d);  % fonction coût en fonction de alpha
 
     % Utilisez fminbnd pour trouver le minimum de la fonction de coût en fonction de alpha
     alpha = fminbnd(f, 0, 1, optimset('TolX', tol));
