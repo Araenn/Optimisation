@@ -22,7 +22,7 @@ function erreur = tp1
     x3 = 4;
     x4 = -5;
 
-    bruit = 0;
+    bruit = 0.005;
     xv = [x1; x2; x3; x4];
     data(:,1) = t';
     % données

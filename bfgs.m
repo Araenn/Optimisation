@@ -22,7 +22,7 @@ function erreur = tp1
     x3 = 4;
     x4 = -5;
 
-    bruit = 0;
+    bruit = 0.005;
     xv = [x1; x2; x3; x4];
     data(:,1) = t';
     % données
@@ -53,7 +53,6 @@ function erreur = tp1
     Hu0 = Ju0' * Ju0;
     %premier mu
     Hu0 = inv(Hu0);
-    nu = 2;
 
     [x_estim, f] = BFGS(niter, critere, data, x0, Hu0);
     if isnan(x_estim)
@@ -91,7 +90,7 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
     i = 2;
     
     % Matrice BFGS initiale
-    H = Hu0;
+    B = Hu0;
     
     while erreur > critere
         if i > niter
@@ -101,7 +100,7 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         
         
         % Direction de recherche
-        d = -H \ g_courant;
+        d = -B \ g_courant;
         
         % Calcul du pas (alpha) avec une recherche linéaire
         alpha = linesearch(data, x0, d, 0.0001);
@@ -113,10 +112,10 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         
         y = g_next - g_courant;
         s = alpha * d;
-        z = H*s;
+        z = B*s;
 
         % Mise à jour de la matrice BFGS
-        H = H + (y*y')/(y'*s) - (z*z')/(s'*z);
+        B = B + (y*y')/(y'*s) - (z*z')/(s'*z);
         
         f(i) = f_next;
         erreur = abs((f(i) - f(i-1)))/f(i-1);
