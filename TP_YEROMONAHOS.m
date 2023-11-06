@@ -7,7 +7,7 @@ for i = 1:nb_estimation
 end
 
 figure(3)
-plot((1:nb_estimation)',erreur)
+stem((1:nb_estimation)',erreur)
 grid on
 title("Erreurs selon les estimations")
 xlabel("n estimations")
@@ -22,7 +22,7 @@ function erreur = tp1
     x3 = 4;
     x4 = -5;
 
-    bruit = 0.005;
+    bruit = 0;
     xv = [x1; x2; x3; x4];
     data(:,1) = t';
     % données
@@ -123,9 +123,9 @@ function [x_estim, f_courant, mu_courant, nu_courant] = dir_LM(x0, data, mu0, nu
 
    % calcul gamma
    u = f'*f;
-   u_dLM =  0.5 * u + dLM'*G + 0.5 * dLM' * (J') * J * dLM;
+   u_dLM =  f + dLM'*G + 0.5 * dLM' * (J') * J * dLM;
 
-   gamma = (f + f_courant) / (u - u_dLM);
+   gamma = (f - f_courant) / (f - u_dLM);
    
    % heuristique
    if gamma > 0
@@ -135,6 +135,8 @@ function [x_estim, f_courant, mu_courant, nu_courant] = dir_LM(x0, data, mu0, nu
    else
        mu_courant = mu0 * nu;
        nu_courant = 2 * nu;
+       f_courant = f;
+       x_estim = x0;
    end
 end
 

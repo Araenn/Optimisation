@@ -1,6 +1,6 @@
 clc; clear; close all
 
-nb_estimation = 10;
+nb_estimation = 1;
 erreur = zeros(nb_estimation, 1);
 for i = 1:nb_estimation
     erreur(i) = tp1;
@@ -13,7 +13,7 @@ title("Erreurs selon les estimations")
 xlabel("n estimations")
 
 function erreur = tp1
-    t = (0:0.01:1)';
+    t = (0:0.01:10)';
     data = zeros(length(t), 2);
     
     % valeurs à trouver
@@ -32,9 +32,9 @@ function erreur = tp1
 
     % initialisation
     x0 = randn(N, 1)
-    %x0 = [0.8404   -0.8880    0.1001   -0.5445    0.3035   -0.6003 0.4900    0.7394    1.7119   -0.1941]'; non
+    x0 = [0.8404   -0.8880    0.1001   -0.5445    0.3035   -0.6003 0.4900    0.7394    1.7119   -0.1941]'; %non
     
-    x0 = [-0.3899; 1.3185; 1.8374; 0.8807; -0.5136; -1.4283; -0.3721; -1.0776; -0.3248; -0.3665]; % FONCTIONNE
+    %x0 = [-0.3899; 1.3185; 1.8374; 0.8807; -0.5136; -1.4283; -0.3721; -1.0776; -0.3248; -0.3665]; % FONCTIONNE
     niter = 1000;
     critere = 10^-12;
 
@@ -94,12 +94,11 @@ function [x_estim, f] = BFGS(niter, critere, data, x0, Hu0)
         end
         [f_courant, g_courant, J] = fcout(data, x0);
         
-        
         % Direction de recherche
         d = -H \ g_courant;
         
         % Calcul du pas (alpha) avec une recherche linéaire
-        alpha = linesearch(data, x0, d, 0.0001);
+        alpha = linesearch(data, x0, d, 0.001);
 
         % Mise à jour de x
         x_next = x0 + alpha * d;

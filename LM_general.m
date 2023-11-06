@@ -1,19 +1,19 @@
 clc; clear; close all
 
-nb_estimation = 10;
+nb_estimation = 1;
 erreur = zeros(nb_estimation, 1);
 for i = 1:nb_estimation
     erreur(i) = tp1;
 end
 
-figure(3)
-plot((1:nb_estimation)',erreur)
-grid on
-title("Erreurs selon les estimations")
-xlabel("n estimations")
+% figure(3)
+% stem((1:nb_estimation)',abs(erreur))
+% grid on
+% title("Erreurs selon les estimations")
+% xlabel("n estimations")
 
 function erreur = tp1
-    t = (0:0.01:1)';
+    t = (0:0.01:10)';
     data = zeros(length(t), 2);
     
     % valeurs à trouver
@@ -33,7 +33,7 @@ function erreur = tp1
 
     % initialisation
     x0 = randn(N, 1);
-    %x0 = [0.8404   -0.8880    0.1001   -0.5445    0.3035   -0.6003    0.4900    0.7394    1.7119   -0.1941]';
+    x0 = [0.8404   -0.8880    0.1001   -0.5445    0.3035   -0.6003    0.4900    0.7394    1.7119   -0.1941]';
     %x0 = [-0.3899; 1.3185; 1.8374; 0.8807; -0.5136; -1.4283; -0.3721; -1.0776; -0.3248; -0.3665]; % non
     %x0 = [1.3054; 0.3658; -1.5758; 1.0079; 0.4747; -1.5317; -0.0272; -0.4168; -1.7485; -0.4404]; %non
     niter = 1000;
@@ -84,9 +84,9 @@ function [x_estim, f] = LM(niter, critere, mu0, data, x0, nu)
     
     f = zeros(niter, 1);
     f(1) = 10^10;
-    erreur = 10;
+    erreur = 10; % plus d'iterations
     i = 2;
-    while erreur > critere
+    while i < niter
         if i > niter
             break;
         end
@@ -107,7 +107,6 @@ end
 
 function [x_estim, f_courant, mu_courant, nu_courant] = dir_LM(x0, data, mu0, nu)
    N = length(x0);
-   x_estim = zeros(N, 1);
    % premiere fonction cout
    [f, G, J] = fcout(data, x0);
    
@@ -119,10 +118,10 @@ function [x_estim, f_courant, mu_courant, nu_courant] = dir_LM(x0, data, mu0, nu
    [f_courant, G2, J2] = fcout(data, xa);
 
    % calcul gamma
-   u = f'*f;
-   u_dLM =  0.5 * u + dLM'*G + 0.5 * dLM' * (J') * J * dLM;
 
-   gamma = (f + f_courant) / (u - u_dLM);
+   u_dLM =  f + dLM'*G + 0.5 * dLM' * (J') * J * dLM;
+
+   gamma = (f - f_courant) / (f - u_dLM);
    
    % heuristique
    if gamma > 0
@@ -132,6 +131,8 @@ function [x_estim, f_courant, mu_courant, nu_courant] = dir_LM(x0, data, mu0, nu
    else
        mu_courant = mu0 * nu;
        nu_courant = 2 * nu;
+       f_courant = f;
+       x_estim = x0;
    end
 end
 
