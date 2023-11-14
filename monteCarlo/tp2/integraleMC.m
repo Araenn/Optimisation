@@ -20,7 +20,7 @@ Stheo = Itheo;
 
 intervalle = [-a*s/sqrt(N) + I, a*s/sqrt(N) + I];
 
-if intervalle(1) < s && s < intervalle(2)
+if intervalle(1) < I && I < intervalle(2)
     calculOk = 1;
 else
     calculOK = 0;
